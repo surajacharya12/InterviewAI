@@ -1,18 +1,23 @@
 # <img src="public/logo.png" alt="InterviewAI Logo" width="48" height="48" style="vertical-align:middle; margin-right:8px;"/> InterviewAI
 
-A modern AI-powered platform for generating mock interview questions and answers tailored to job roles, descriptions, and experience levels.
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/interviewai?style=social)](https://github.com/yourusername/interviewai/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/yourusername/interviewai)](https://github.com/yourusername/interviewai/issues)
+[![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+A modern, open-source AI-powered platform for generating mock interview questions and answers tailored to job roles, descriptions, and experience levels.
 
 ---
 
-## Features
+## 🚀 Features
 
 - Generate interview questions and answers using Google Gemini AI
 - Customizable by job role, description, and experience
 - Beautiful, modern UI with React and Tailwind CSS
 - Secure backend API integration (no API keys exposed to frontend)
 - Easy extensibility for new features
+- Built with Next.js App Router and Drizzle ORM
 
-## Getting Started
+## 🛠️ Getting Started
 
 ### 1. Clone the repository
 
@@ -55,7 +60,7 @@ Visit [http://localhost:3000](http://localhost:3000) to view the app.
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 - `app/` - Next.js app directory (pages, API routes, UI)
 - `components/` - Reusable UI components
@@ -64,6 +69,18 @@ Visit [http://localhost:3000](http://localhost:3000) to view the app.
 
 ---
 
-## License
+## 🤝 Contributing
 
-MIT
+We welcome contributions from everyone! Whether you're fixing bugs, adding new features, improving documentation, or sharing ideas, your input is highly valued.
+
+- Fork the repository and create your branch
+- Make your changes and submit a pull request
+- Please ensure your code follows the project's style and passes all checks
+
+If you have suggestions for improvements or want to discuss new features, feel free to open an issue. Let's build something amazing together!
+
+---
+
+## 📄 License
+
+MIT — Free to use, modify, and distribute. See [LICENSE](LICENSE) for details.
