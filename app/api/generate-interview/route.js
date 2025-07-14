@@ -1,4 +1,9 @@
+import { db } from '@/utils/db';
+import { MockInterview } from '@/utils/schema';
+import { currentUser } from '@clerk/nextjs/server';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+import moment from 'moment/moment';
+import { v4 as uuidv4 } from 'uuid';
 
 const apikey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
@@ -19,11 +24,11 @@ const safetySettings = [
   { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM },
 ];
 
-let lastRequestTime = 0; // simple in-memory throttle (resets on server restart)
+let lastRequestTime = 0;
 
 export async function POST(req) {
   const now = Date.now();
-  if (now - lastRequestTime < 15000) { // 15 seconds cooldown
+  if (now - lastRequestTime < 15000) {
     return new Response(
       JSON.stringify({ success: false, error: "Too many requests, please wait 15 seconds before retrying." }),
       { status: 429, headers: { 'Content-Type': 'application/json' } }
@@ -32,6 +37,8 @@ export async function POST(req) {
   lastRequestTime = now;
 
   try {
+    const user = await currentUser(); // ✅ moved here
+
     const { jobRole, jobDescription, experience, questionCount } = await req.json();
 
     const model = GenAi.getGenerativeModel({
@@ -45,15 +52,34 @@ export async function POST(req) {
     const prompt = `Job Position: ${jobRole}, Job Description: ${jobDescription}, Years of Experience: ${experience}. Based on the job position, description, and years of experience, generate ${questionCount || 5} interview questions along with their answers in JSON format. Make sure that one of the questions is 'Tell me about yourself'.`;
 
     const result = await chat.sendMessage(prompt);
-    const text = await result.response.text();
+    const rawText = await result.response.text();
 
-    return new Response(JSON.stringify({ success: true, result: text }), {
+    const cleanedText = rawText.replace('```json', '').replace('```', '');
+    const jsonResp = JSON.parse(cleanedText);
+
+    if (cleanedText) {
+      const Resp = await db.insert(MockInterview).values({
+        mockId: uuidv4(),
+        jsonMockResp: cleanedText,
+        jobPosition: jobRole,
+        jobDesc: jobDescription,
+        jobExperience: experience,
+        createdBy: user?.primaryEmailAddress?.emailAddress,
+        createdAt: moment().format('DD-MM-YYYY'),
+      }).returning({ mockId: MockInterview.mockId });
+
+      console.log("jsonResp", Resp);
+    } else {
+      console.log("Error", error);
+    }
+
+    return new Response(JSON.stringify({ success: true, result: jsonResp }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
+
   } catch (error) {
     console.error("API Error:", error);
-    // Check if error is rate limit from Gemini API and pass it back cleanly
     if (error.status === 429) {
       return new Response(
         JSON.stringify({ success: false, error: "API quota exceeded, please try again later." }),
