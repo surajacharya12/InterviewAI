@@ -5,7 +5,7 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/ge
 import moment from 'moment/moment';
 import { v4 as uuidv4 } from 'uuid';
 
-const apikey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const apikey = process.env.NEXT_PUBLIC_GEMINI_API_KEY; // ✅ use server-side safe key
 
 const GenAi = new GoogleGenerativeAI(apikey);
 
@@ -37,7 +37,7 @@ export async function POST(req) {
   lastRequestTime = now;
 
   try {
-    const user = await currentUser(); // ✅ moved here
+    const user = await currentUser();
 
     const { jobRole, jobDescription, experience, questionCount } = await req.json();
 
@@ -54,24 +54,30 @@ export async function POST(req) {
     const result = await chat.sendMessage(prompt);
     const rawText = await result.response.text();
 
-    const cleanedText = rawText.replace('```json', '').replace('```', '');
-    const jsonResp = JSON.parse(cleanedText);
+    const cleanedText = rawText.replace('```json', '').replace('```', '').trim();
 
-    if (cleanedText) {
-      const Resp = await db.insert(MockInterview).values({
-        mockId: uuidv4(),
-        jsonMockResp: cleanedText,
-        jobPosition: jobRole,
-        jobDesc: jobDescription,
-        jobExperience: experience,
-        createdBy: user?.primaryEmailAddress?.emailAddress,
-        createdAt: moment().format('DD-MM-YYYY'),
-      }).returning({ mockId: MockInterview.mockId });
-
-      console.log("jsonResp", Resp);
-    } else {
-      console.log("Error", error);
+    let jsonResp;
+    try {
+      jsonResp = JSON.parse(cleanedText);
+    } catch (parseErr) {
+      console.error("❌ JSON Parse Error:", parseErr, "\nRaw AI Output:", cleanedText);
+      return new Response(
+        JSON.stringify({ success: false, error: "Failed to parse AI response as JSON." }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
     }
+
+    const Resp = await db.insert(MockInterview).values({
+      mockId: uuidv4(),
+      jsonMockResp: cleanedText,
+      jobPosition: jobRole,
+      jobDesc: jobDescription,
+      jobExperience: experience,
+      createdBy: user?.primaryEmailAddress?.emailAddress,
+      createdAt: moment().format('DD-MM-YYYY'),
+    }).returning({ mockId: MockInterview.mockId });
+
+    console.log("✅ MockInterview Saved:", Resp);
 
     return new Response(JSON.stringify({ success: true, result: jsonResp }), {
       status: 200,
@@ -79,16 +85,15 @@ export async function POST(req) {
     });
 
   } catch (error) {
-    console.error("API Error:", error);
-    if (error.status === 429) {
-      return new Response(
-        JSON.stringify({ success: false, error: "API quota exceeded, please try again later." }),
-        { status: 429, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
+    console.error("❌ API Error:", error);
+    const status = error?.status === 429 ? 429 : 500;
+    const message = error?.status === 429
+      ? "API quota exceeded, please try again later."
+      : error?.message || "Internal server error";
+
     return new Response(
-      JSON.stringify({ success: false, error: error.message || "Internal server error" }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ success: false, error: message }),
+      { status, headers: { 'Content-Type': 'application/json' } }
     );
   }
 }
