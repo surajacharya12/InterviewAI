@@ -1,6 +1,8 @@
 import React from "react";
 import AddNewInterview from "./_components/AddNewInterview";
 import Image from "next/image";
+import MyCreatedInterviews from "./_components/MyCreatedInterviews";
+import MyGivenInterviews from "./_components/MyGivenInterviews";
 
 export default function DashboardPage() {
   return (
@@ -44,6 +46,9 @@ export default function DashboardPage() {
           </div>
         </section>
       </div>
+        {/* Your Interviews Section */}
+        <MyGivenInterviews />
+        <MyCreatedInterviews />
     </div>
   );
 }

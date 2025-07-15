@@ -9,6 +9,8 @@ import {
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Toaster } from "sonner"; // ✅ Import the toaster
+import Header from "./dashboard/_components/Header"; // Import Header
+import { usePathname } from "next/navigation"; // Import usePathname
 
 export const UserDetailContext = createContext();
 
@@ -25,6 +27,7 @@ const geistMono = Geist_Mono({
 function InnerProvider({ children }) {
   const { user } = useUser();
   const [userDetail, setUserDetail] = useState(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const createOrFetchUser = async () => {
@@ -47,6 +50,8 @@ function InnerProvider({ children }) {
 
   return (
     <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
+      {/* Show Header on all pages except home page ('/') */}
+      {pathname !== "/" && <Header />}
       {children}
     </UserDetailContext.Provider>
   );

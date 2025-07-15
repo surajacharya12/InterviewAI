@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 function DetailItem({ Icon, title, text }) {
   return (
     <div className="flex items-start gap-4">
@@ -27,6 +28,8 @@ export default function InterviewPage() {
   const { interviewId } = useParams()
   const [webCamEnable, setWebCamEnable] = useState(false)
   const [interviewData, setInterviewData] = useState(null)
+  const [startClicked, setStartClicked] = useState(false)
+  const router = useRouter();
 
   useEffect(() => {
     if (!interviewId) return
@@ -114,15 +117,17 @@ export default function InterviewPage() {
 
           {/* Start Interview Button */}
           <div className="flex justify-end mt-6">
-          <Link href={`/dashboard/interView/${interviewId}/start`}>
-              <Button
-                size="lg"
-                className="bg-indigo-700 hover:bg-indigo-800 text-white shadow-lg"
-                disabled={!interviewData} // disable if no interview data loaded
-              >
-                Start Interview
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              className={`shadow-lg text-white ${startClicked ? "bg-blue-600" : "bg-indigo-700 hover:bg-indigo-800"}`}
+              disabled={!interviewData}
+              onClick={() => {
+                setStartClicked(true);
+                router.push(`/dashboard/interView/${interviewId}/start`);
+              }}
+            >
+              Start Interview
+            </Button>
           </div>
         </section>
       </div>

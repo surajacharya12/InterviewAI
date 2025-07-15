@@ -83,6 +83,9 @@ export default function StartInterviewPage() {
             questions={mockInterviewQuestions.map((q) => q.question)}
             currentQuestionIndex={activeQuestionsIndex}
             onNextQuestion={handleNextQuestion}
+            mockInterviewQuestions={mockInterviewQuestions}
+            activeQuestionsIndex={activeQuestionsIndex}
+            interviewData={interviewData}
           />
         </div>
       </section>

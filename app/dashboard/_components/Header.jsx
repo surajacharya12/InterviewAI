@@ -10,7 +10,7 @@ import {
   X,
   LayoutDashboard,
   HelpCircle,
-  ArrowUpRight,
+  Compass,
   FileQuestion
 } from 'lucide-react'
 
@@ -21,8 +21,8 @@ function Header() {
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Question', href: '/question', icon: FileQuestion },
-    { name: 'Upgrade', href: '/upgrade', icon: ArrowUpRight },
-    { name: 'How it works?', href: '/how-it-works', icon: HelpCircle },
+    { name: 'Explore Interview', href: '/explore', icon: Compass },
+    { name: 'How it works?', href: '/howItWorks', icon: HelpCircle },
   ]
 
   return (
