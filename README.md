@@ -46,6 +46,7 @@ NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT=
+NEXT_PUBLIC_INFORMATION="Enable Video Web Cam and Microphone to Start your AI Generated Mock Interview. It Has 5 question which you can answer. NOTE:We never record your interview Video. Web Cam access you can disable at any time if you want"
 ```
 
 > **Hint:** Never commit your real API keys or secrets to version control. Always use environment variables for sensitive information.
