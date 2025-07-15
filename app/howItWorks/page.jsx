@@ -30,7 +30,7 @@ export default function HowItWorksPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-50 to-white py-16 px-4">
+    <main className="min-h-screen bg-gradient-to-br py-16 px-4">
       <section className="max-w-3xl mx-auto text-center mb-16">
         <h1 className="text-4xl font-extrabold text-indigo-800 mb-4 drop-shadow-sm">
           How InterviewAI Works

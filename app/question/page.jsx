@@ -114,7 +114,7 @@ export default function InterviewQuestionList() {
     <>
       <Toaster position="top-center" richColors />
 
-      <div className="min-h-screen bg-gradient-to-br from-white to-gray-100 px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-br px-4 py-8">
         {/* Header & Search & Add Button */}
         <div className="max-w-6xl mx-auto flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-10">
           <div className="text-center sm:text-left">
