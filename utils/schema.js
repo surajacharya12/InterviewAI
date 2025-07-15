@@ -36,3 +36,13 @@ export const UserAnswer=pgTable("userAnswer",{
   userEmail:varchar("userEmail"),
   createdAt:varchar("createdAt")
 })
+
+export const InterviewQuestion = pgTable("interview_question", {
+  id: serial("id").primaryKey(),
+  mockId: varchar("mock_id", { length: 36 }).notNull().unique(), // UUID string
+  jsonMockResp: text("json_mock_resp").notNull(), // JSON string of Q&A
+  jobPosition: varchar("job_position", { length: 255 }).notNull(),
+  jobDesc: varchar("job_desc", { length: 1000 }).notNull(),
+  noOfQuestions: integer("no_of_questions").notNull(),
+  createdBy:varchar("createdBy").notNull(),
+});
