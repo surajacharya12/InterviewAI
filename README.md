@@ -10,6 +10,12 @@ A modern, open-source AI-powered platform for generating mock interview question
 
 ## 🚀 Features
 
+- Modern, visually appealing home page with a clear call to action
+- Single prominent **Get Started** button that navigates users to their dashboard
+- Hero section with bold branding and a concise value proposition
+- "How It Works" section with step-by-step visuals and explanations
+- Testimonials from successful users
+- Stats and trust signals for credibility
 - Generate interview questions and answers using Google Gemini AI
 - Customizable by job role, description, and experience
 - Beautiful, modern UI with React and Tailwind CSS
@@ -18,6 +24,12 @@ A modern, open-source AI-powered platform for generating mock interview question
 - Built with Next.js App Router and Drizzle ORM
 - **User authentication and onboarding with Clerk**
 - **Direct navigation to generated interview details**
+
+## 🏠 Home Page Experience
+
+- The home page features a bold hero section, a single "Get Started" button (navigates to `/dashboard`), and a clean, modern layout.
+- Users are guided through the platform's value with a "How It Works" section, feature highlights, testimonials, and stats.
+- The user journey is streamlined for clarity and engagement.
 
 ## 🛠️ Getting Started
 
