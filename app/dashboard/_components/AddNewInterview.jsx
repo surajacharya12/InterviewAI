@@ -12,10 +12,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Rocket, XCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'  // App Router hook
 
 function AddNewInterview() {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -37,14 +39,21 @@ function AddNewInterview() {
       const data = await response.json()
 
       if (response.status === 429) {
-        console.error("Rate Limit Error:", data.error || "Too many requests, please wait and try again.")
+        console.error("Rate Limit Error:", data.error || "Too many requests.")
       } else if (!data.success) {
-        console.error("API Error:", data.error || "Failed to generate interview questions.")
+        console.error("API Error:", data.error || "Failed to generate interview.")
       } else {
-        console.log("Generated Interview Questions:", data.result)
+        console.log("✅ Generated Interview:", data.result)
+
+        // Navigate to generated interview page with mockId from API
+        if (data.mockId) {
+          router.push(`/dashboard/interView/${data.mockId}`)
+        } else {
+          console.warn("❗ mockId not found in response.")
+        }
       }
     } catch (err) {
-      console.error("Network Error:", err)
+      console.error("❌ Network Error:", err)
     } finally {
       setLoading(false)
       setOpen(false)

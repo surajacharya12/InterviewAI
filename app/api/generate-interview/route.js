@@ -5,8 +5,7 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/ge
 import moment from 'moment/moment';
 import { v4 as uuidv4 } from 'uuid';
 
-const apikey = process.env.NEXT_PUBLIC_GEMINI_API_KEY; // ✅ use server-side safe key
-
+const apikey = process.env.NEXT_PUBLIC_GEMINI_API_KEY; // server-side safe key
 const GenAi = new GoogleGenerativeAI(apikey);
 
 const generationConfig = {
@@ -38,6 +37,12 @@ export async function POST(req) {
 
   try {
     const user = await currentUser();
+    if (!user) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized" }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
     const { jobRole, jobDescription, experience, questionCount } = await req.json();
 
@@ -54,7 +59,7 @@ export async function POST(req) {
     const result = await chat.sendMessage(prompt);
     const rawText = await result.response.text();
 
-    const cleanedText = rawText.replace('```json', '').replace('```', '').trim();
+    const cleanedText = rawText.replace(/```json|```/g, '').trim();
 
     let jsonResp;
     try {
@@ -67,19 +72,22 @@ export async function POST(req) {
       );
     }
 
+    const newMockId = uuidv4();
+
     const Resp = await db.insert(MockInterview).values({
-      mockId: uuidv4(),
+      mockId: newMockId,
       jsonMockResp: cleanedText,
       jobPosition: jobRole,
       jobDesc: jobDescription,
       jobExperience: experience,
-      createdBy: user?.primaryEmailAddress?.emailAddress,
+      createdBy: user.primaryEmailAddress?.emailAddress,
       createdAt: moment().format('DD-MM-YYYY'),
     }).returning({ mockId: MockInterview.mockId });
 
     console.log("✅ MockInterview Saved:", Resp);
 
-    return new Response(JSON.stringify({ success: true, result: jsonResp }), {
+    // Return the saved mockId so frontend can use it for routing
+    return new Response(JSON.stringify({ success: true, result: jsonResp, mockId: newMockId }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

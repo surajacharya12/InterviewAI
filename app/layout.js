@@ -8,6 +8,7 @@ import {
 } from "@clerk/nextjs";
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
+import { Toaster } from "sonner"; // ✅ Import the toaster
 
 export const UserDetailContext = createContext();
 
@@ -58,6 +59,7 @@ export default function RootLayout({ children }) {
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <InnerProvider>
             {children}
+            <Toaster richColors position="top-right" /> {/* ✅ Toast container */}
           </InnerProvider>
         </body>
       </html>
