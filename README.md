@@ -16,6 +16,8 @@ A modern, open-source AI-powered platform for generating mock interview question
 - Secure backend API integration (no API keys exposed to frontend)
 - Easy extensibility for new features
 - Built with Next.js App Router and Drizzle ORM
+- **User authentication and onboarding with Clerk**
+- **Direct navigation to generated interview details**
 
 ## 🛠️ Getting Started
 
@@ -67,6 +69,33 @@ Visit [http://localhost:3000](http://localhost:3000) to view the app.
 - `components/` - Reusable UI components
 - `utils/` - Database and AI integration utilities
 - `public/` - Static assets (including logo)
+
+---
+
+## 🔐 User Authentication & Onboarding
+
+- Authentication is handled by [Clerk](https://clerk.com/). Users sign in or sign up using Clerk's UI.
+- On first login, the app automatically creates a user record in the database by calling the `/api/user` endpoint with the user's name and email.
+- The user context is available throughout the app for personalized features.
+
+---
+
+## 🤖 Interview Generation & Navigation
+
+- Users can generate a mock interview by providing job role, description, and experience.
+- The backend API (`/api/generate-interview`) generates questions and stores the interview in the database.
+- **API Response:**
+  - On success, the API returns:
+    ```json
+    {
+      "success": true,
+      "result": {
+        /* questions & answers */
+      },
+      "mockId": "<interviewId>"
+    }
+    ```
+  - The frontend automatically navigates to `/dashboard/interView/<interviewId>` after a successful generation, where users can view their generated interview.
 
 ---
 
