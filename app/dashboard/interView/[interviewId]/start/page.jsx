@@ -16,7 +16,7 @@ export default function StartInterviewPage() {
 
     const GetInterViewDetails = async () => {
       try {
-        const res = await fetch(`/api/interview/${interviewId}/questions/`);
+        const res = await fetch(`/api/InterviewApi/interview/${interviewId}/questions/`);
         if (!res.ok) {
           console.log("No interview data found");
           return;
@@ -25,7 +25,6 @@ export default function StartInterviewPage() {
         const data = await res.json();
         console.log("Interview API response:", data);
 
-        // Normalize response to always be an array of questions
         const normalizedQuestions = Array.isArray(data)
           ? data
           : Array.isArray(data?.jsonMockResp)
@@ -34,8 +33,16 @@ export default function StartInterviewPage() {
           ? data.interview_questions
           : [];
 
+        const mockId = data.mockId || interviewId;
+
         setMockInterviewQuestions(normalizedQuestions);
-        setInterviewData(data);
+
+        setInterviewData({
+          ...data,
+          mockId,
+          jobPosition: data.jobPosition ?? "",
+          jobDesc: data.jobDesc ?? "",
+        });
       } catch (error) {
         console.error("Error fetching interview details:", error);
       }
@@ -45,22 +52,21 @@ export default function StartInterviewPage() {
   }, [interviewId]);
 
   const handleNextQuestion = () => {
-    setActiveQuestionsIndex((current) => {
-      if (current < mockInterviewQuestions.length - 1) {
-        return current + 1;
-      }
-      return current;
-    });
+    setActiveQuestionsIndex((current) =>
+      current < mockInterviewQuestions.length - 1 ? current + 1 : current
+    );
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-50 to-white py-12 px-6 md:px-12 pl-15">
+    <main className="min-h-screen bg-gradient-to-br py-12 px-6 md:px-12 pl-15">
       <header className="max-w-4xl mx-auto mb-12 text-center">
         <h1 className="text-4xl font-extrabold text-indigo-900 tracking-tight">
           Interview Question Navigator
         </h1>
         <p className="mt-3 text-lg text-indigo-700">
-          Use the &quot;<span className="font-semibold text-indigo-600">Next Question</span>&quot; button to proceed. <br />
+          Use the &quot;
+          <span className="font-semibold text-indigo-600">Next Question</span>
+          &quot; button to proceed. <br />
           Once you advance, going back is disabled to keep your flow uninterrupted.
         </p>
       </header>
@@ -74,6 +80,8 @@ export default function StartInterviewPage() {
           <QuestionSection
             mockInterviewQuestions={mockInterviewQuestions}
             activeQuestionsIndex={activeQuestionsIndex}
+            jobPosition={interviewData?.jobPosition || ""}
+            jobDesc={interviewData?.jobDesc || ""}
           />
         </div>
 
@@ -86,6 +94,8 @@ export default function StartInterviewPage() {
             mockInterviewQuestions={mockInterviewQuestions}
             activeQuestionsIndex={activeQuestionsIndex}
             interviewData={interviewData}
+            jobPosition={interviewData?.jobPosition || ""}
+            jobDesc={interviewData?.jobDesc || ""}
           />
         </div>
       </section>

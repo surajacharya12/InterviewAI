@@ -16,7 +16,7 @@ export default function MyCreatedInterviews() {
 
   useEffect(() => {
     if (user) {
-      fetch(`/api/user-interviews`)
+      fetch(`/api/InterviewApi/user-interviews`)
         .then((res) => res.json())
         .then((data) => {
           setInterviews(data.data || []);
@@ -29,8 +29,41 @@ export default function MyCreatedInterviews() {
     }
   }, [user]);
 
-  const handleStartInterview = (mock) => {
-    router.push(`/dashboard/interView/${mock.mockId}`);
+  const handleStartInterview = async (mock) => {
+    if (!user) {
+      toast.error("You must be logged in");
+      return;
+    }
+
+    const interviewData = {
+      mockId: mock.mockId,
+      createdBy: user.emailAddresses?.[0]?.emailAddress || user.id,
+      createdAt: new Date().toISOString(),
+      jobPosition: mock.jobPosition,
+      jobDesc: mock.jobDesc,
+      jobExperience: mock.jobExperience,
+    };
+
+    try {
+      const res = await fetch("/api/InterviewApi/mytakeninterview", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(interviewData),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to save interview");
+      }
+
+      toast.success("Interview saved, redirecting...");
+      router.push(`/dashboard/interView/${mock.mockId}`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to start interview.");
+    }
   };
 
   return (
@@ -67,19 +100,13 @@ export default function MyCreatedInterviews() {
                   <h4 className="text-xl font-semibold text-blue-700 mb-2">
                     {mock.jobPosition}
                   </h4>
-                  <p
-                    className="text-gray-700 mb-1 truncate"
-                    title={mock.jobDesc}
-                  >
+                  <p className="text-gray-700 mb-1 truncate" title={mock.jobDesc}>
                     {mock.jobDesc}
                   </p>
                   <p className="text-gray-500 text-sm mb-1">
                     <strong>Experience:</strong> {mock.jobExperience} years
                   </p>
-                  <p
-                    className="text-gray-400 text-xs mb-1 truncate"
-                    title={mock.createdBy}
-                  >
+                  <p className="text-gray-400 text-xs mb-1 truncate" title={mock.createdBy}>
                     <strong>Created By:</strong> {mock.createdBy}
                   </p>
                   <p className="text-gray-400 text-xs mb-4">

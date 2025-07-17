@@ -34,7 +34,7 @@ function InnerProvider({ children }) {
       try {
         if (!user) return;
 
-        const res = await axios.post("/api/user", {
+        const res = await axios.post("/api/userLoginSignup/user", {
           name: user.fullName,
           email: user.primaryEmailAddress?.emailAddress,
         });

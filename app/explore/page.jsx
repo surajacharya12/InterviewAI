@@ -68,7 +68,7 @@ export default function ExploreMockInterviews() {
       if (res.ok) {
         toast.success(data.message || "Enrolled successfully!");
         setTimeout(() => {
-          router.push(`/dashboard/interView/${mock.mockId}`);
+          router.push(`/dashboard`);
         }, 500);
       } else {
         toast.error(data.message || "Failed to enroll");

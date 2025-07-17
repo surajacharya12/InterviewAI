@@ -4,6 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { XCircle, ChevronLeft, ClipboardList } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function InterviewQA() {
   const { mockId } = useParams();
@@ -17,7 +23,7 @@ export default function InterviewQA() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/interview-questions");
+      const res = await fetch("/api/InterviewApi/interview-questions");
       const data = await res.json();
 
       if (!res.ok || !data.success) {
@@ -81,23 +87,22 @@ export default function InterviewQA() {
             </p>
           </header>
 
-          {/* Questions */}
+          {/* Accordion Questions */}
           {interview.questions && interview.questions.length > 0 ? (
-            <div className="space-y-6">
+            <Accordion type="single" collapsible>
               {interview.questions.map(({ question, answer }, idx) => (
-                <article
-                  key={idx}
-                  className="p-6 bg-indigo-50 rounded-lg border border-indigo-200 shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <h3 className="text-indigo-700 font-semibold text-lg mb-2">
+                <AccordionItem key={idx} value={`item-${idx}`}>
+                  <AccordionTrigger>
                     Q{idx + 1}: {question}
-                  </h3>
-                  <pre className="whitespace-pre-wrap text-gray-800 font-mono text-sm bg-white p-4 rounded-md border border-gray-200">
-                    {answer}
-                  </pre>
-                </article>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <pre className="whitespace-pre-wrap text-gray-800 font-mono text-sm bg-white p-4 rounded-md border border-gray-200">
+                      {answer}
+                    </pre>
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
           ) : (
             <p className="text-center text-gray-500 text-lg font-medium">
               No questions available for this interview.

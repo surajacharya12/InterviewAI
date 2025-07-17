@@ -31,7 +31,7 @@ export default function InterviewQuestionList() {
     setLoading(true);
     setError(null);
     try {
-      let url = "/api/interview-questions";
+      let url = "/api/InterviewApi/interview-questions";
       if (searchTerm) {
         url += `?search=${encodeURIComponent(searchTerm)}`;
       }

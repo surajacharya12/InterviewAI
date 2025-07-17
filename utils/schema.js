@@ -25,17 +25,28 @@ export const mockInterviewEnrollmentsTable = pgTable("mockInterviewEnrollments",
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
-export const UserAnswer=pgTable("userAnswer",{
-  id:serial("id").primaryKey(),
-  mockIdRef:varchar("mockId").notNull(),
-  question:varchar("question").notNull(),
-  correctanswer:varchar("Correctanswer").notNull(),
-  useranswer:text("userAns"),
-  feedback:text('feedback'),
-  rating:varchar('rating'),
-  userEmail:varchar("userEmail"),
-  createdAt:varchar("createdAt")
-})
+export const UserAnswer = pgTable("userAnswer", {
+  id: serial("id").primaryKey(),
+  mockIdRef: varchar("mockId").notNull(), // maps to DB column "mockId"
+  question: varchar("question").notNull(),
+  correctanswer: varchar("Correctanswer").notNull(),
+  useranswer: text("userAns"),
+  feedback: text("feedback"),
+  rating: varchar("rating"),
+  userEmail: varchar("userEmail"),
+  createdAt: varchar("createdAt"),
+  
+});
+
+export const MyTakenInterview = pgTable("my_taken_interview", {
+  id: serial("id").primaryKey(),
+  mockId: varchar("mock_id").notNull(),
+  createdBy: varchar("created_by").notNull(),
+  createdAt: varchar("created_at").notNull(),
+  jobPosition: varchar("job_position").notNull(),
+  jobDesc: varchar("job_desc").notNull(),
+  jobExperience: varchar("job_experience").notNull(),
+});
 
 export const InterviewQuestion = pgTable("interview_question", {
   id: serial("id").primaryKey(),

@@ -36,7 +36,7 @@ export default function InterviewPage() {
 
     const fetchInterview = async () => {
       try {
-        const res = await fetch(`/api/interview/${interviewId}`)
+        const res = await fetch(`/api/InterviewApi/interview/${interviewId}`)
         if (!res.ok) throw new Error("Interview not found")
         const data = await res.json()
         setInterviewData(data)

@@ -20,21 +20,39 @@ export async function POST(req) {
       );
     }
 
+    // Explicit .select to avoid drizzle/neon issues
     const existing = await db
-      .select()
+      .select({
+        id: usersTable.id,
+        name: usersTable.name,
+        email: usersTable.email,
+        subscriptionId: usersTable.subscriptionId,
+      })
       .from(usersTable)
       .where(eq(usersTable.email, email));
 
     if (existing.length > 0) {
-      return NextResponse.json({ message: "User already exists", user: existing[0] });
+      return NextResponse.json({
+        message: "User already exists",
+        user: existing[0],
+      });
     }
 
+    // Insert new user
     const result = await db
       .insert(usersTable)
       .values({ name, email })
-      .returning();
+      .returning({
+        id: usersTable.id,
+        name: usersTable.name,
+        email: usersTable.email,
+        subscriptionId: usersTable.subscriptionId,
+      });
 
-    return NextResponse.json({ message: "User created", user: result[0] });
+    return NextResponse.json({
+      message: "User created",
+      user: result[0],
+    });
   } catch (err) {
     console.error("DB Error:", err);
     return NextResponse.json(

@@ -4,6 +4,8 @@ import { User, Repeat } from "react-feather";
 export default function QuestionSection({
   mockInterviewQuestions,
   activeQuestionsIndex,
+  jobPosition,
+  jobDesc,
   // onQuestionClick,  // Remove this prop as buttons are disabled now
 }) {
   const activeQuestion =

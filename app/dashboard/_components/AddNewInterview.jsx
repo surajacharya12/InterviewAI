@@ -1,5 +1,6 @@
-"use client"
-import React, { useState } from 'react'
+"use client";
+
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,58 +8,61 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Rocket, XCircle } from 'lucide-react'
-import { useRouter } from 'next/navigation'  // App Router hook
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Rocket, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function AddNewInterview() {
-  const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
-    const form = e.currentTarget
-    const jobRole = form.jobRole.value.trim()
-    const jobDescription = form.jobDescription.value.trim()
-    const experience = form.experience.value.trim()
-    const questionCount = process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT || 5
+    const form = e.currentTarget;
+    const jobRole = form.jobRole.value.trim();
+    const jobDescription = form.jobDescription.value.trim();
+    const experience = form.experience.value.trim();
+    const questionCount = process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT || 5;
 
     try {
-      const response = await fetch('/api/generate-interview', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/InterviewApi/generate-interview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobRole, jobDescription, experience, questionCount }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
+      console.log("API Response Data:", data);
 
       if (response.status === 429) {
-        console.error("Rate Limit Error:", data.error || "Too many requests.")
+        alert(data.error || "Too many requests. Please wait.");
+        console.error("Rate Limit Error:", data.error);
       } else if (!data.success) {
-        console.error("API Error:", data.error || "Failed to generate interview.")
+        alert(data.error || "Failed to generate interview.");
+        console.error("API Error:", data.error);
       } else {
-        console.log("✅ Generated Interview:", data.result)
-
-        // Navigate to generated interview page with mockId from API
+        console.log("✅ Generated Interview:", data.result);
         if (data.mockId) {
-          router.push(`/dashboard/interView/${data.mockId}`)
+          router.push(`/dashboard/`);
         } else {
-          console.warn("❗ mockId not found in response.")
+          console.warn("❗ mockId not found in response.");
+          alert("Interview generated but no mock ID returned.");
         }
       }
     } catch (err) {
-      console.error("❌ Network Error:", err)
+      alert("Network error, please try again.");
+      console.error("❌ Network Error:", err);
     } finally {
-      setLoading(false)
-      setOpen(false)
+      setLoading(false);
+      setOpen(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -67,17 +71,13 @@ function AddNewInterview() {
           onClick={() => setOpen(true)}
           className="p-10 border rounded-lg bg-gradient-to-br from-blue-100 to-indigo-200 hover:scale-105 hover:shadow-xl cursor-pointer transition duration-300"
         >
-          <h2 className="font-bold text-lg text-center text-indigo-800">
-            + Add New Interview
-          </h2>
+          <h2 className="font-bold text-lg text-center text-indigo-800">+ Add New Interview</h2>
         </div>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl">
-            Tell us more about your interview
-          </DialogTitle>
+          <DialogTitle className="text-2xl">Tell us more about your interview</DialogTitle>
           <DialogDescription>
             Add details about your job position, job description, and years of experience.
           </DialogDescription>
@@ -85,9 +85,7 @@ function AddNewInterview() {
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Job Role / Position
-            </label>
+            <label className="block text-sm font-medium mb-1">Job Role / Position</label>
             <Input
               name="jobRole"
               type="text"
@@ -97,9 +95,7 @@ function AddNewInterview() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Job Description
-            </label>
+            <label className="block text-sm font-medium mb-1">Job Description</label>
             <Textarea
               name="jobDescription"
               placeholder="e.g. Build scalable web apps using React and Node.js"
@@ -110,9 +106,7 @@ function AddNewInterview() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Years of Experience
-            </label>
+            <label className="block text-sm font-medium mb-1">Years of Experience</label>
             <Input
               name="experience"
               type="number"
@@ -135,7 +129,7 @@ function AddNewInterview() {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
-export default AddNewInterview
+export default AddNewInterview;
